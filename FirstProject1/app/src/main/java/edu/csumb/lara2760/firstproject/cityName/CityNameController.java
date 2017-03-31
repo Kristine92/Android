@@ -1,10 +1,14 @@
 package edu.csumb.lara2760.firstproject.cityName;
 
-import javax.inject.Inject;
+import android.content.Intent;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import javax.inject.Inject;
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
+import edu.csumb.lara2760.firstproject.R;
 import edu.csumb.lara2760.firstproject.WeatherApp;
 import edu.csumb.lara2760.firstproject.network.components.NetComponent;
 import edu.csumb.lara2760.firstproject.util.PerController;
@@ -13,10 +17,12 @@ import retrofit2.Retrofit;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+import static edu.csumb.lara2760.firstproject.R.id.cityNameInput;
+
 /**
  * controller for {@link CityNameActivity}
  */
-public class CityNameController {
+public class CityNameController implements CityNameLayout.CityNameLayoutListener {
 
     private CityNameActivity mCityNameActivity;
     @Inject CityNameLayout mCityNameLayout;
@@ -26,7 +32,7 @@ public class CityNameController {
         mCityNameActivity = cityNameActivity;
         DaggerCityNameController_CityNameControllerComponent.builder()
                 .netComponent(((WeatherApp) cityNameActivity.getApplicationContext()).getNetComponent())
-                .cityNameControllerModule(new CityNameControllerModule(mCityNameActivity))
+                .cityNameControllerModule(new CityNameControllerModule(mCityNameActivity, this))
                 .build()
                 .inject(this);
         mRetrofit.create(WeatherApi.class)
@@ -36,21 +42,31 @@ public class CityNameController {
                 .subscribe(mCityNameLayout);
     }
 
+    @Override
+    public void onSubmitButtonClicked() {
+        Toast.makeText(mCityNameActivity.getApplicationContext(), "TEST", Toast.LENGTH_SHORT).show();
+    }
+
     @PerController
     @Component(dependencies = NetComponent.class, modules = CityNameControllerModule.class)
     interface CityNameControllerComponent {
         void inject (CityNameController cityNameController);
     }
+
     @Module
     static class CityNameControllerModule {
         private CityNameActivity cityNameActivity;
-        public CityNameControllerModule(CityNameActivity activity){
+        private CityNameLayout.CityNameLayoutListener mCityNameLayoutListener;
+        public CityNameControllerModule(CityNameActivity activity, CityNameLayout.CityNameLayoutListener listener) {
             cityNameActivity = activity;
+            mCityNameLayoutListener = listener;
         }
+
         @Provides
+
         @PerController
-        CityNameLayout providesCityNameLayout(){
-            return new CityNameLayout(cityNameActivity);
+        CityNameLayout providesCityNameLayout() {
+            return new CityNameLayout(cityNameActivity, mCityNameLayoutListener);
         }
     }
 
