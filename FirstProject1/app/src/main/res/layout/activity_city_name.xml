@@ -13,7 +13,6 @@
         android:ems="10"
         android:hint="City Name"
         android:inputType="textPersonName"
-        android:text="City"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="38dp" />
 

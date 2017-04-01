@@ -1,5 +1,6 @@
 package edu.csumb.lara2760.firstproject.cityName;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ public class CityNameController implements CityNameLayout.CityNameLayoutListener
                 .cityNameControllerModule(new CityNameControllerModule(mCityNameActivity, this))
                 .build()
                 .inject(this);
+
         mRetrofit.create(WeatherApi.class)
                 .getWeather("9dd263d0405171a8127527ff014f258a", "Salinas")
                 .subscribeOn(Schedulers.newThread())
@@ -43,8 +45,8 @@ public class CityNameController implements CityNameLayout.CityNameLayoutListener
     }
 
     @Override
-    public void onSubmitButtonClicked() {
-        Toast.makeText(mCityNameActivity.getApplicationContext(), "TEST", Toast.LENGTH_SHORT).show();
+    public void onSubmitButtonClicked(String cityName) {
+        Toast.makeText(mCityNameActivity.getApplicationContext(), cityName, Toast.LENGTH_SHORT).show();
     }
 
     @PerController
